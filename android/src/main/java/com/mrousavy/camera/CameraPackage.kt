@@ -16,7 +16,7 @@ class CameraPackage : TurboReactPackage() {
     return listOf(CameraViewManager(reactContext))
   }
 
-  override fun getModule(name: String?, reactContext: ReactApplicationContext?): NativeModule? {
+  override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
     if (name.equals(CameraModule.NAME)) {
       return  CameraModule(reactContext);
     } else {
