@@ -13,6 +13,9 @@ import { CameraDevices } from './CameraDevices'
 import type { EmitterSubscription } from 'react-native'
 import type { Code, CodeScanner, CodeScannerFrame } from './CodeScanner'
 import { TakeSnapshotOptions } from './Snapshot'
+import NativeCameraViewCodegen from './specs/CameraViewNativeComponent'
+
+const NativeCameraView = NativeCameraViewCodegen as unknown as ReturnType<typeof requireNativeComponent<NativeCameraViewProps>>
 
 //#region Types
 export type CameraPermissionStatus = 'granted' | 'not-determined' | 'denied' | 'restricted'
@@ -604,10 +607,3 @@ export class Camera extends React.PureComponent<CameraProps, CameraState> {
   }
 }
 //#endregion
-
-// requireNativeComponent automatically resolves 'CameraView' to 'CameraViewManager'
-const NativeCameraView = requireNativeComponent<NativeCameraViewProps>(
-  'CameraView',
-  // @ts-expect-error because the type declarations are kinda wrong, no?
-  Camera,
-)
