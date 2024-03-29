@@ -3,10 +3,10 @@
 //#import "RNCameraView.h"
 #import <React/RCTViewComponentView.h>
 
-#import <react/renderer/components/RNVisionCameraSpec/ComponentDescriptors.h>
-#import <react/renderer/components/RNVisionCameraSpec/EventEmitters.h>
-#import <react/renderer/components/RNVisionCameraSpec/Props.h>
-#import <react/renderer/components/RNVisionCameraSpec/RCTComponentViewHelpers.h>
+#import <react/renderer/components/CameraNativeComponentSpec/ComponentDescriptors.h>
+#import <react/renderer/components/CameraNativeComponentSpec/EventEmitters.h>
+#import <react/renderer/components/CameraNativeComponentSpec/Props.h>
+#import <react/renderer/components/CameraNativeComponentSpec/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
 #import <AVFoundation/AVCaptureAudioDataOutput.h>
@@ -237,6 +237,44 @@ return self;
     if (_view.format.count == 0) {
         _view.format = nil;
     }
+    
+    if(_view.codeScannerOptions == nil){
+        _view.codeScannerOptions =[[NSMutableDictionary alloc] init];
+    }
+
+    if(oldViewProps.codeScannerOptions.codeTypes.size() != newViewProps.codeScannerOptions.codeTypes.size()){
+        NSMutableArray* newCodeTypes = [[NSMutableArray alloc] init];
+        for(int i = 0; i < newViewProps.codeScannerOptions.codeTypes.size(); i++){
+            [newCodeTypes addObject:RCTNSStringFromString(newViewProps.codeScannerOptions.codeTypes.at(i))];
+        }
+        [_view.codeScannerOptions setValue:newCodeTypes forKey:@"codeTypes"];
+        [changedProps addObject:@"codeScannerOptions"];
+    }
+    
+    if(oldViewProps.codeScannerOptions.interval != newViewProps.codeScannerOptions.interval){
+        [_view.codeScannerOptions setValue:[NSNumber numberWithDouble:newViewProps.codeScannerOptions.interval] forKey:@"interval"];
+        [changedProps addObject:@"codeScannerOptions"];
+    }
+    
+    if(
+       oldViewProps.codeScannerOptions.regionOfInterest.x != newViewProps.codeScannerOptions.regionOfInterest.x ||
+       oldViewProps.codeScannerOptions.regionOfInterest.y != newViewProps.codeScannerOptions.regionOfInterest.y ||
+       oldViewProps.codeScannerOptions.regionOfInterest.width != newViewProps.codeScannerOptions.regionOfInterest.width ||
+       oldViewProps.codeScannerOptions.regionOfInterest.height != newViewProps.codeScannerOptions.regionOfInterest.height
+       ){
+        NSDictionary *newRegionOfInterest = @{
+            @"x": @(newViewProps.codeScannerOptions.regionOfInterest.x),
+            @"y": @(newViewProps.codeScannerOptions.regionOfInterest.y),
+            @"width": @(newViewProps.codeScannerOptions.regionOfInterest.width),
+            @"height": @(newViewProps.codeScannerOptions.regionOfInterest.height),
+        };
+        [_view.codeScannerOptions setValue:newRegionOfInterest forKey:@"regionOfInterest"];
+        [changedProps addObject:@"codeScannerOptions"];
+    }
+    
+    if (_view.codeScannerOptions.count == 0) {
+        _view.codeScannerOptions = nil;
+    }
 
     [_view didSetProps:changedProps];
 
@@ -273,8 +311,31 @@ return self;
     }
 }
 
-- (void)onCodeScanned {
-    
+- (void)onCodeScannedWithMessage:(NSDictionary *)message {
+    if(_eventEmitter){
+        std::dynamic_pointer_cast<const CameraViewEventEmitter>(_eventEmitter)
+        ->onCodeScanned( CameraViewEventEmitter::OnCodeScanned{
+            .codes = {
+                .type = std::string([(message != nil ? [[message objectForKey:@"codes"] objectForKey:@"type"] : @"") UTF8String]),
+                .value = std::string([(message != nil ? [[message objectForKey:@"codes"] objectForKey:@"value"] : @"") UTF8String]),
+                .frame = {
+                    .x = [(message != nil ? [[[message objectForKey:@"codes"] objectForKey:@"frame"] objectForKey:@"x"] : @0) doubleValue],
+                    .y = [(message != nil ? [[[message objectForKey:@"codes"] objectForKey:@"frame"] objectForKey:@"y"] : @0) doubleValue],
+                    .width = [(message != nil ? [[[message objectForKey:@"codes"] objectForKey:@"frame"] objectForKey:@"width"] : @0) doubleValue],
+                    .height = [(message != nil ? [[[message objectForKey:@"codes"] objectForKey:@"frame"] objectForKey:@"height"] : @0) doubleValue],
+                },
+            },
+            .frame = {
+                .width = [(message != nil ? [[message objectForKey:@"frame"] objectForKey:@"width"] : @0) intValue],
+                .height = [(message != nil ? [[message objectForKey:@"frame"] objectForKey:@"height"] : @0) intValue],
+            },
+            // nothing is sent here from CameraView
+            .corners = {
+                .x = [(message != nil ? [[message objectForKey:@"corners"] objectForKey:@"x"] : @0) doubleValue],
+                .y = [(message != nil ? [[message objectForKey:@"corners"] objectForKey:@"y"] : @0) doubleValue],
+            }
+        });
+    }
 }
 
 

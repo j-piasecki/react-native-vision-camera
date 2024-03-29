@@ -418,8 +418,10 @@ guard let onError = onError else { return }
   guard let delegate = delegate else {
     return
   }
-  // TODO
-  delegate.onCodeScanned()
+  delegate.onCodeScanned(message:[
+    "codes": codes.map { $0.toJSValue() },
+    "frame": scannerFrame.toJSValue(),
+  ])
 #else
     guard let onCodeScanned = onCodeScanned else {
       return
@@ -461,5 +463,5 @@ guard let onError = onError else { return }
     func onStarted()
     func onStopped()
     func onShutter(message: NSDictionary)
-    func onCodeScanned()
+    func onCodeScanned(message: NSDictionary)
 }
