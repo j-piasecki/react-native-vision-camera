@@ -13,7 +13,7 @@
     "typescript": "tsc --noEmit"
   },
   "dependencies": {
-    "@react-native-camera-roll/camera-roll": "^5.7.2",
+    "@react-native-camera-roll/camera-roll": "^6.0.1",
     "@react-native-community/blur": "^4.3.2",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",

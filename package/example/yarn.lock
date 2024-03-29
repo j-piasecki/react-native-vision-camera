@@ -1416,10 +1416,10 @@
     picocolors "^1.0.0"
     tslib "^2.6.0"
 
-"@react-native-camera-roll/camera-roll@^5.7.2":
-  version "5.10.0"
-  resolved "https://registry.yarnpkg.com/@react-native-camera-roll/camera-roll/-/camera-roll-5.10.0.tgz#98cf5489be6805ac926b1c4d29ac956cf4df45dc"
-  integrity sha512-NZb/zU4S+k1Hx2Y3BdNufrfn8whNsiRjHNxeiGMak8OwDDJikqP5Ej7HXFv8sJSfTGfi1ddH0wdd541MHV/Nbw==
+"@react-native-camera-roll/camera-roll@^6.0.1":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@react-native-camera-roll/camera-roll/-/camera-roll-6.0.2.tgz#0caac34ddb9ea539d126d49eb2035a48d07d4656"
+  integrity sha512-8sL4IdE/fNrNMMfUOEnmAR7TJpPy6yQh2vabKUX5HCHCIh2/vxiuo5rp3c8rW4pD3OPW+Hz1iIstBGEMPWtlUg==
 
 "@react-native-community/blur@^4.3.2":
   version "4.3.2"
