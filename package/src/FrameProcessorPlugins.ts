@@ -98,7 +98,7 @@ try {
       isAsyncContextBusy.value = false
     }
   }, asyncContext)
-  hasWorklets = true
+  // hasWorklets = true
 } catch (e) {
   // Worklets are not installed, so Frame Processors are disabled.
 }

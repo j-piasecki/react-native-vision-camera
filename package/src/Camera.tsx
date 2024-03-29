@@ -10,10 +10,12 @@ import type { Point } from './Point'
 import type { RecordVideoOptions, VideoFile } from './VideoFile'
 import { VisionCameraProxy } from './FrameProcessorPlugins'
 import { CameraDevices } from './CameraDevices'
-import type { EmitterSubscription } from 'react-native'
+import type { EmitterSubscription, requireNativeComponent } from 'react-native'
 import type { Code, CodeScanner, CodeScannerFrame } from './CodeScanner'
 import { TakeSnapshotOptions } from './Snapshot'
-import CameraNativeComponent from './specs/CameraNativeComponent';
+import NativeCameraViewCodegen from './specs/CameraViewNativeComponent'
+
+const NativeCameraView = NativeCameraViewCodegen as unknown as ReturnType<typeof requireNativeComponent<NativeCameraViewProps>>
 
 //#region Types
 export type CameraPermissionStatus = 'granted' | 'not-determined' | 'denied' | 'restricted'
@@ -583,7 +585,7 @@ export class Camera extends React.PureComponent<CameraProps, CameraState> {
     const torch = this.state.isRecordingWithFlash ? 'on' : props.torch
 
     return (
-      <CameraNativeComponent
+      <NativeCameraView
         {...props}
         cameraId={device.id}
         ref={this.ref}

@@ -5,6 +5,8 @@
 /package-lock.json
 /yarn.lock
 
+.yarn
+
 # when switching from v2 -> v3 branches
 /example
 /ios
