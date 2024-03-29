@@ -3,10 +3,10 @@
 //#import "RNCameraView.h"
 #import <React/RCTViewComponentView.h>
 
-#import <react/renderer/components/CameraNativeComponentSpec/ComponentDescriptors.h>
-#import <react/renderer/components/CameraNativeComponentSpec/EventEmitters.h>
-#import <react/renderer/components/CameraNativeComponentSpec/Props.h>
-#import <react/renderer/components/CameraNativeComponentSpec/RCTComponentViewHelpers.h>
+#import <react/renderer/components/RNVisionCameraSpec/ComponentDescriptors.h>
+#import <react/renderer/components/RNVisionCameraSpec/EventEmitters.h>
+#import <react/renderer/components/RNVisionCameraSpec/Props.h>
+#import <react/renderer/components/RNVisionCameraSpec/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
 #import <AVFoundation/AVCaptureAudioDataOutput.h>
