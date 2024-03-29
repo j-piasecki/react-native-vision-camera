@@ -40,6 +40,7 @@ Pod::Spec.new do |s|
   # Note how this does not include headers, since those can nameclash.
   s.source_files = [
     # Core
+    "ios/VisionCamera.h",
     "ios/*.{m,mm,swift}",
     "ios/Core/*.{m,mm,swift}",
     "ios/Extensions/*.{m,mm,swift}",
@@ -47,6 +48,7 @@ Pod::Spec.new do |s|
     "ios/React Utils/*.{m,mm,swift}",
     "ios/Types/*.{m,mm,swift}",
     "ios/CameraBridge.h",
+    "ios/RNCameraView.h",
 
     # Frame Processors
     hasWorklets ? "ios/Frame Processor/*.{m,mm,swift}" : "",
@@ -66,9 +68,10 @@ Pod::Spec.new do |s|
     "ios/**/*.h"
   ]
 
-  s.dependency "React"
-  s.dependency "React-Core"
-  s.dependency "React-callinvoker"
+  s.pod_target_xcconfig    = {
+      "OTHER_SWIFT_FLAGS" => "-DRCT_NEW_ARCH_ENABLED"
+  }
+  install_modules_dependencies(s)
 
   if hasWorklets
     s.dependency "react-native-worklets-core"

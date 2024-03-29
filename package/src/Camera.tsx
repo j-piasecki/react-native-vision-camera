@@ -1,5 +1,5 @@
 import React from 'react'
-import { requireNativeComponent, NativeSyntheticEvent, findNodeHandle, NativeMethods } from 'react-native'
+import { NativeSyntheticEvent, findNodeHandle, NativeMethods } from 'react-native'
 import type { CameraDevice } from './CameraDevice'
 import type { ErrorWithCause } from './CameraError'
 import { CameraCaptureError, CameraRuntimeError, tryParseNativeCameraError, isErrorWithCause } from './CameraError'
@@ -13,6 +13,7 @@ import { CameraDevices } from './CameraDevices'
 import type { EmitterSubscription } from 'react-native'
 import type { Code, CodeScanner, CodeScannerFrame } from './CodeScanner'
 import { TakeSnapshotOptions } from './Snapshot'
+import CameraNativeComponent from './specs/CameraNativeComponent';
 
 //#region Types
 export type CameraPermissionStatus = 'granted' | 'not-determined' | 'denied' | 'restricted'
@@ -582,7 +583,7 @@ export class Camera extends React.PureComponent<CameraProps, CameraState> {
     const torch = this.state.isRecordingWithFlash ? 'on' : props.torch
 
     return (
-      <NativeCameraView
+      <CameraNativeComponent
         {...props}
         cameraId={device.id}
         ref={this.ref}
@@ -604,10 +605,3 @@ export class Camera extends React.PureComponent<CameraProps, CameraState> {
   }
 }
 //#endregion
-
-// requireNativeComponent automatically resolves 'CameraView' to 'CameraViewManager'
-const NativeCameraView = requireNativeComponent<NativeCameraViewProps>(
-  'CameraView',
-  // @ts-expect-error because the type declarations are kinda wrong, no?
-  Camera,
-)

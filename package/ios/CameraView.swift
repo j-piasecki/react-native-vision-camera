@@ -23,39 +23,42 @@ import UIKit
 public final class CameraView: UIView, CameraSessionDelegate {
   // pragma MARK: React Properties
   // props that require reconfiguring
-  @objc var cameraId: NSString?
-  @objc var enableDepthData = false
-  @objc var enablePortraitEffectsMatteDelivery = false
-  @objc var enableBufferCompression = false
+  @objc public var cameraId: NSString?
+  @objc public var enableDepthData = false
+  @objc public var enablePortraitEffectsMatteDelivery = false
+  @objc public var enableBufferCompression = false
   // use cases
-  @objc var photo = false
-  @objc var video = false
-  @objc var audio = false
-  @objc var enableFrameProcessor = false
-  @objc var codeScannerOptions: NSDictionary?
-  @objc var pixelFormat: NSString?
-  @objc var enableLocation = false
+  @objc public var photo = false
+  @objc public var video = false
+  @objc public var audio = false
+  @objc public var enableFrameProcessor = false
+  @objc public var codeScannerOptions: NSDictionary?
+  @objc public var pixelFormat: NSString?
+  @objc public var enableLocation = false
   // props that require format reconfiguring
-  @objc var format: NSDictionary?
-  @objc var fps: NSNumber?
-  @objc var videoHdr = false
-  @objc var photoHdr = false
-  @objc var photoQualityBalance: NSString?
-  @objc var lowLightBoost = false
-  @objc var orientation: NSString?
+  @objc public var format: NSDictionary?
+  @objc public var fps: NSNumber?
+  @objc public var videoHdr = false
+  @objc public var photoHdr = false
+  @objc public var photoQualityBalance: NSString?
+  @objc public var lowLightBoost = false
+  @objc public var orientation: NSString?
   // other props
-  @objc var isActive = false
-  @objc var torch = "off"
-  @objc var zoom: NSNumber = 1.0 // in "factor"
-  @objc var exposure: NSNumber = 1.0
-  @objc var enableFpsGraph = false
-  @objc var videoStabilizationMode: NSString?
-  @objc var resizeMode: NSString = "cover" {
+  @objc public var isActive = false
+  @objc public var torch = "off"
+  @objc public var zoom: NSNumber = 1.0 // in "factor"
+  @objc public var exposure: NSNumber = 1.0
+  @objc public var enableFpsGraph = false
+  @objc public var videoStabilizationMode: NSString?
+  @objc public var resizeMode: NSString = "cover" {
     didSet {
       let parsed = try? ResizeMode(jsValue: resizeMode as String)
       previewView.resizeMode = parsed ?? .cover
     }
   }
+#if RCT_NEW_ARCH_ENABLED
+  @objc public var delegate: RNCameraViewDirectEventDelegate?
+#else
 
   // events
   @objc var onInitialized: RCTDirectEventBlock?
@@ -65,8 +68,9 @@ public final class CameraView: UIView, CameraSessionDelegate {
   @objc var onShutter: RCTDirectEventBlock?
   @objc var onViewReady: RCTDirectEventBlock?
   @objc var onCodeScanned: RCTDirectEventBlock?
+#endif
   // zoom
-  @objc var enableZoomGesture = false {
+  @objc public var enableZoomGesture = false {
     didSet {
       if enableZoomGesture {
         addPinchGestureRecognizer()
@@ -117,7 +121,14 @@ public final class CameraView: UIView, CameraSessionDelegate {
     if newSuperview != nil {
       if !isMounted {
         isMounted = true
-        onViewReady?(nil)
+#if RCT_NEW_ARCH_ENABLED
+  guard let delegate = delegate else {
+    return
+  }
+  delegate.onViewReady()
+#else
+  onViewReady?(nil)
+#endif
       }
     }
   }
@@ -287,10 +298,6 @@ public final class CameraView: UIView, CameraSessionDelegate {
 
   func onError(_ error: CameraError) {
     ReactLogger.log(level: .error, message: "Invoking onError(): \(error.message)")
-    guard let onError = onError else {
-      return
-    }
-
     var causeDictionary: [String: Any]?
     if case let .unknown(_, cause) = error,
        let cause = cause {
@@ -301,44 +308,86 @@ public final class CameraView: UIView, CameraSessionDelegate {
         "details": cause.userInfo,
       ]
     }
+#if RCT_NEW_ARCH_ENABLED
+  guard let delegate = delegate else {
+    return
+  }
+  delegate.onError(error:[
+    "code": error.code,
+    "message": error.message,
+    "cause": causeDictionary ?? NSNull(),
+  ])
+#else
+guard let onError = onError else { return }
     onError([
       "code": error.code,
       "message": error.message,
       "cause": causeDictionary ?? NSNull(),
     ])
+#endif
   }
 
   func onSessionInitialized() {
     ReactLogger.log(level: .info, message: "Camera initialized!")
+#if RCT_NEW_ARCH_ENABLED
+  guard let delegate = delegate else {
+    return
+  }
+  delegate.onInitialized()
+#else
     guard let onInitialized = onInitialized else {
       return
     }
     onInitialized([:])
+#endif
   }
 
   func onCameraStarted() {
     ReactLogger.log(level: .info, message: "Camera started!")
+#if RCT_NEW_ARCH_ENABLED
+  guard let delegate = delegate else {
+    return
+  }
+  delegate.onStarted()
+#else
     guard let onStarted = onStarted else {
       return
     }
     onStarted([:])
+#endif
   }
 
   func onCameraStopped() {
     ReactLogger.log(level: .info, message: "Camera stopped!")
+#if RCT_NEW_ARCH_ENABLED
+  guard let delegate = delegate else {
+    return
+  }
+  delegate.onStopped()
+#else
     guard let onStopped = onStopped else {
       return
     }
     onStopped([:])
+#endif
   }
 
   func onCaptureShutter(shutterType: ShutterType) {
+#if RCT_NEW_ARCH_ENABLED
+  guard let delegate = delegate else {
+    return
+  }
+  delegate.onShutter(message:[
+    "type": shutterType.jsValue,
+  ])
+#else
     guard let onShutter = onShutter else {
       return
     }
     onShutter([
       "type": shutterType.jsValue,
     ])
+#endif
   }
 
   func onFrame(sampleBuffer: CMSampleBuffer) {
@@ -365,6 +414,13 @@ public final class CameraView: UIView, CameraSessionDelegate {
   }
 
   func onCodeScanned(codes: [CameraSession.Code], scannerFrame: CameraSession.CodeScannerFrame) {
+#if RCT_NEW_ARCH_ENABLED
+  guard let delegate = delegate else {
+    return
+  }
+  // TODO
+  delegate.onCodeScanned()
+#else
     guard let onCodeScanned = onCodeScanned else {
       return
     }
@@ -372,6 +428,7 @@ public final class CameraView: UIView, CameraSessionDelegate {
       "codes": codes.map { $0.toJSValue() },
       "frame": scannerFrame.toJSValue(),
     ])
+#endif
   }
 
   /**
@@ -395,4 +452,14 @@ public final class CameraView: UIView, CameraSessionDelegate {
       return cameraPosition == .front ? .upMirrored : .down
     }
   }
+}
+
+@objc public protocol RNCameraViewDirectEventDelegate: AnyObject { //TODO: Move to a separate file
+    func onInitialized()
+    func onError(error: NSDictionary)
+    func onViewReady()
+    func onStarted()
+    func onStopped()
+    func onShutter(message: NSDictionary)
+    func onCodeScanned()
 }
