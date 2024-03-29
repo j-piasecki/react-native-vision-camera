@@ -129,6 +129,12 @@ android {
   sourceSets {
     main {
       manifest.srcFile androidManifestPath
+
+      java {
+        if (!isNewArchitectureEnabled()) {
+          srcDirs += 'oldarch/src/main/java'
+        }
+      }
     }
   }
 
