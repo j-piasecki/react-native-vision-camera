@@ -166,5 +166,13 @@
       ]
     ]
   },
+  "codegenConfig": {
+    "name": "RNVisioncameraSpec",
+    "type": "all",
+    "jsSrcsDir": "./src/specs",
+    "android": {
+      "javaPackageName": "com.mrousavy.camera"
+    }
+  },
   "packageManager": "yarn@1.22.19"
 }
